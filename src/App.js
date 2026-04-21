@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, LayoutGrid, Menu, Lock, Plus, User } from 'lucide-react';
+import { Home, LayoutGrid, Menu, Lock, Plus } from 'lucide-react';
 
 const SproutApp = () => {
   const [activeTab, setActiveTab] = useState('Pothos');
