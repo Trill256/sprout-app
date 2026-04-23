@@ -1,81 +1,63 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
-
-const PLANT_TYPES = [
-  { id: 'pata-de-elefante', label: 'Pata de elefante', emoji: '🌴' },
-];
+import { PLANT_TYPES } from '../plantTypes';
 
 const AddPlantModal = ({ onAdd, onClose }) => {
   const [name, setName] = useState('');
-  const [selectedType, setSelectedType] = useState(null);
+  const [type, setType] = useState(Object.keys(PLANT_TYPES)[0]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (name.trim() && selectedType) {
-      onAdd({ name: name.trim(), type: selectedType });
-      onClose();
-    }
+  const handleSubmit = () => {
+    if (!name.trim()) return;
+    onAdd({ name: name.trim(), type });
+    onClose();
   };
 
-  const isValid = name.trim() && selectedType;
-
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-3xl p-8 w-full max-w-sm shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Nueva planta</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <X size={20} />
-          </button>
-        </div>
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-6 w-80 shadow-lg flex flex-col gap-4">
+        <h2 className="text-lg font-semibold text-gray-700">Nueva planta</h2>
 
-        <form onSubmit={handleSubmit}>
-          <label className="block text-sm text-gray-500 mb-2">Nombre</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ej. Mi Pothos, Cactus de la sala..."
-            autoFocus
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:border-[#627C44] mb-6"
-          />
+        <input
+          className="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-200"
+          placeholder="Nombre de tu planta"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-          <label className="block text-sm text-gray-500 mb-3">Tipo de planta</label>
-          <div className="max-h-48 overflow-y-auto flex flex-col gap-2 mb-6 pr-1">
-            {PLANT_TYPES.map((type) => (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm text-gray-500">Tipo de planta</label>
+          <div className="grid grid-cols-1 gap-2">
+            {Object.entries(PLANT_TYPES).map(([typeName, { emoji, min, max }]) => (
               <button
-                key={type.id}
-                type="button"
-                onClick={() => setSelectedType(type)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
-                  selectedType?.id === type.id
-                    ? 'bg-[#E8F1DE] border-[#627C44] text-[#4D6434]'
-                    : 'bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100'
+                key={typeName}
+                onClick={() => setType(typeName)}
+                className={`flex items-center gap-3 px-4 py-2 rounded-xl border text-sm transition-all ${
+                  type === typeName
+                    ? 'border-green-400 bg-green-50 text-green-700 font-medium'
+                    : 'border-gray-100 text-gray-500 hover:border-gray-300'
                 }`}
               >
-                <span className="text-xl">{type.emoji}</span>
-                <span className="font-medium text-sm">{type.label}</span>
-                {selectedType?.id === type.id && (
-                  <span className="ml-auto text-[#627C44]">✓</span>
-                )}
+                <span className="text-xl">{emoji}</span>
+                <span className="flex-1 text-left">{typeName}</span>
+                <span className="text-xs text-gray-400">{min}–{max}%</span>
               </button>
             ))}
           </div>
+        </div>
 
+        <div className="flex gap-2 mt-2">
           <button
-            type="submit"
-            disabled={!isValid}
-            className="w-full bg-[#4D6434] hover:bg-[#3E512A] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white py-3 rounded-2xl font-bold transition-colors"
+            onClick={onClose}
+            className="flex-1 py-2 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50"
           >
-            Agregar planta
+            Cancelar
           </button>
-        </form>
+          <button
+            onClick={handleSubmit}
+            className="flex-1 py-2 rounded-xl bg-green-500 text-white text-sm font-medium hover:bg-green-600"
+          >
+            Agregar
+          </button>
+        </div>
       </div>
     </div>
   );

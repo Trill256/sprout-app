@@ -1,12 +1,13 @@
 import React from 'react';
 
-const HumidityBar = ({ value = null }) => {
+const HumidityBar = ({ value = null, happyRange = null }) => {
   const hasData = value !== null;
+  const min = happyRange?.min ?? 60;
+  const max = happyRange?.max ?? 80;
 
   const getColor = (v) => {
-    if (v < 30) return 'bg-red-400';
-    if (v < 60) return 'bg-amber-400';
-    if (v <= 80) return 'bg-[#8CA454]';
+    if (v >= min && v <= max) return 'bg-[#8CA454]';
+    if (v < min) return v < min - 20 ? 'bg-red-400' : 'bg-amber-400';
     return 'bg-blue-400';
   };
 
@@ -21,16 +22,26 @@ const HumidityBar = ({ value = null }) => {
         )}
       </div>
       <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden mb-2">
+        {/* Zona feliz */}
+        {happyRange && (
+          <div
+            className="absolute top-0 h-full bg-green-100 rounded-full"
+            style={{ left: `${min}%`, width: `${max - min}%` }}
+          />
+        )}
+        {/* Barra de humedad actual */}
         <div
           className={`absolute left-0 top-0 h-full rounded-full transition-all duration-500 ${
             hasData ? getColor(value) : 'bg-gray-200'
           }`}
           style={{ width: hasData ? `${value}%` : '0%' }}
-        ></div>
+        />
       </div>
       <div className="flex justify-between text-xs font-medium">
         <span className="text-gray-300">Seco 0%</span>
-        <span className={hasData ? 'text-[#627C44]' : 'text-gray-300'}>Óptimo 60–80%</span>
+        <span className={hasData ? 'text-[#627C44]' : 'text-gray-300'}>
+          Óptimo {min}–{max}%
+        </span>
         <span className="text-gray-300">Saturado 100%</span>
       </div>
     </div>

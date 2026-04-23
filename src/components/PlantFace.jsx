@@ -38,17 +38,21 @@ const faces = {
 };
 
 const statusMap = {
-  standby: { bg: 'bg-gray-100', text: 'text-gray-400', label: 'En espera de conexión...' },
-  happy:   { bg: 'bg-[#E8F1DE]', text: 'text-[#4D6434]', label: 'Muy feliz — sigue así' },
-  neutral: { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Necesita un poco de agua' },
-  sad:     { bg: 'bg-red-50', text: 'text-red-600', label: 'Necesita agua urgente' },
+  standby: { bg: 'bg-gray-100',    text: 'text-gray-400',   label: 'En espera de conexión...' },
+  happy:   { bg: 'bg-[#E8F1DE]',  text: 'text-[#4D6434]',  label: 'Muy feliz — sigue así' },
+  neutral: { bg: 'bg-amber-50',    text: 'text-amber-700',  label: 'Necesita un poco de agua' },
+  sad:     { bg: 'bg-red-50',      text: 'text-red-600',    label: 'Necesita agua urgente' },
 };
 
-const PlantFace = ({ plantName, humidity = null }) => {
+const PlantFace = ({ plantName, humidity = null, happyRange = null }) => {
+  const min = happyRange?.min ?? 60;
+  const max = happyRange?.max ?? 80;
+  const buffer = (max - min) * 0.5; // zona neutral = 50% debajo del mínimo
+
   const getMood = (v) => {
     if (v === null) return 'standby';
-    if (v >= 60 && v <= 80) return 'happy';
-    if (v >= 30 && v < 60) return 'neutral';
+    if (v >= min && v <= max) return 'happy';
+    if (v >= min - buffer) return 'neutral';
     return 'sad';
   };
 
